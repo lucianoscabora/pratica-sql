@@ -1,0 +1,176 @@
+create database nome; // cria o banco de dados com o nome escolhido
+
+drop database nome; // deleta o banco de dados com o nome escolhido
+
+select * FROM tabelaX // retorna todos os dados da tabela escolhida
+
+SELECT * FROM person.Person // retorna todos os dados da tabela person.Person
+SELECT Title FROM person.Person // retorna filtrado apenas o campo Title da tabela person.Person
+
+Exercício 1: Filtrar nome completo (Primeiro nome, nome do meio e último nome) da tabela person.Person:
+Resposta: SELECT FirstName, MiddleName, LastName FROM person.Person
+
+SELECT DISTINCT firstName FROM person.Person // adicionar DISTINCT remove dados duplicados
+
+Exercício 2: Quantos sobrenomes únicos temos na tabela person.Person?
+Resposta: SELECT DISTINCT lastName FROM person.Person - 1.206 sobrenomes únicos
+
+SELECT * FROM production.Product
+WHERE color = 'blue' or color = 'black' // Retorna os dados de produtos que possuem a cor azul OU preta
+
+SELECT * FROM production.Product
+WHERE ListPrice > 1500 // retorna os produtos que tem o valor maior que 1500
+
+SELECT * FROM production.Product
+WHERE ListPrice > 1500 and ListPrice < 5000 // retorna os produtos dentro de um limite de valor, no caso maior que 1500 e menos que 5000
+
+SELECT * FROM production.Product
+WHERE color <> 'red' // retorna todos os produtos que não são vermelhos
+
+Exercício 3: Filtrar por todos os nomes das pecas que pesam mais que 500kg e menos que 700kg:
+SELECT DISTINCT Name, Weight from production.Product
+WHERE cast(Weight as decimal(16,2)) > 500 AND cast(Weight as decimal(16,2)) < 700
+
+Exercício 4: Filtrar todos os empregados que são casados e assalariados
+Resposta: SELECT * FROM HumanResources.Employee WHERE MaritalStatus = 'M' AND SalariedFlag = '1'
+
+Exercício 5: Filtrar o e-mail do funcionário Peter Krebs, será necessário pegar dados de duas tabelas:
+Resposta: 
+SELECT FirstName, LastName, EmailAddress FROM person.EmailAddress
+INNER JOIN person.Person ON person.BusinessEntityID = person.EmailAddress.BusinessEntityID
+WHERE FirstName = 'Peter' AND LastName = 'Krebs'
+
+SELECT count(*) FROM person.Person // Retorna a quantidade de registros da tabela person.Person
+SELECT count(DISTINCT title) FROM person.Person // Retorna a quantidade de títulos únicos da tabela person.Person
+
+Exercício 6: Descobrir quantos produtos há cadastrados na tabela production.Product
+Resposta: SELECT count(*) FROM production.Product
+
+Exercício 7: Descobrir quantos tamanhos há cadastrados na tabela production.Product
+Resposta: SELECT count(Size) FROM production.Product
+
+SELECT TOP 10 * FROM person.Person // Retorna os 10 primeiros registros da tabela person.Person
+
+SELECT * FROM person.Person ORDER BY FirstName asc // Retorna os registros ordenados por ordem crescente
+SELECT * FROM person.Person ORDER BY FirstName desc // ordem decrescente
+SELECT * FROM person.Person ORDER BY FirstName asc, LastName desc // Retorna nomes crescentes e sobrenomes decrescentes
+
+Exercício 8: Listar os 10 produtos usando ProductID, por ordem de mais caros para mais baratos
+Resposta: SELECT TOP 10 ProductID FROM production.Product ORDER BY ListPrice desc
+
+Exercício 9: Listar os produtos com os campos ProductID e Name, para os dados que tenham ProductID entre 1 e 4
+Resultado: SELECT TOP 4 Name, ProductID FROM production.Product ORDER BY ProductID asc
+
+Between: Encontrar um dado entre um valor minimo e um valor máximo
+Exemplos: 
+SELECT * FROM production.Product WHERE ListPrice between 1000 and 1500; //Retorna todos os produtos que custam entre 1000 e 1500;
+SELECT * FROM production.Product WHERE ListPrice NOT between 1000 and 1500; //Retorna todos os valores que não estão nesse range definido de 1000 e 1500;
+SELECT * FROM HumanResources.Employee WHERE HireDate between '2009/01/01' AND '2010/01/01' order by HireDate // Retorna funcionários contratados entre 2009 e 2010, ordenados ascendentemente.
+
+Operador IN para se usar junto com Where com objetivo de filtrar mais dados.
+Exemplo:
+SELECT * FROM production.Product WHERE color IN ('red','blue') // Retorna os produtos da tabela production.Product onde sejam vermelhos/azuis
+SELECT * FROM production.Product WHERE color NOT IN ('red','blue') // Retorna os dados que não sejam azuis/vermelhos
+
+Operador Like, usado para retornar valor com algum dado que você não tem certeza, por exemplo um nome que comece com "Ovi" mas não se recorda do nome completo
+Exemplo: 
+SELECT * FROM person.Person WHERE FirstName like 'ovi%' // Retornará o nome de duas pessoas que se chamam "Ovidiu"
+SELECT * FROM person.Person WHERE FirstName like '%to' // O sinal de % colocado no início indica que só se recorda do final do nome, então retornará todos os nomes com "to" no final.
+SELECT * FROM person.Person WHERE FirstName like '%essa%' // Nesse caso, só se lembra que tem "essa" no nome, mas não se sabe se é no final ou no início, então basta colocar os simbolos % no início e fim,
+para retornar todos os nomes com "essa" em alguma parte.
+SELECT * FROM person.Person WHERE FirstName like '%ro_' // Retorna nomes com apenas UM caracter após o "ro", nunca mais do que isso.
+
+Exercício 10: Quantos produtos temos cadastrado no sistema que custam mais de 1500?
+Resposta: SELECT count(ListPrice) FROM production.Product WHERE ListPrice > 1500
+
+Exercício 11: Quantas pessoas temos com sobrenomes que se inicía com a letra p?
+Resposta: SELECT count(LastName) FROM person.Person WHERE LastName like 'p%'
+
+Exercício 12: Quantas cidades únicas tem cadastradas na base de dados?
+Resposta: SELECT count(distinct(City)) FROM person.Address
+
+Exercício 13: Quais cidades únicas temos cadastradas na base de dados?
+Resposta: SELECT DISTINCT City FROM person.Address
+
+Exercício 14: Quantos produtos vermelhos e com os precos entre 500 e 1000 temos cadastrado?
+Resposta: SELECT Count(*) FROM Production.Product WHERE color IN ('red') AND ListPrice between 500 AND 1000
+
+Exercício 15: Quantos produtos cadastrados tem a palavra "road" em seus nomes?
+Resposta: SELECT Count(*) FROM Production.Product WHERE Name like '%road%'
+
+Teoria: Min, Max, Sum e Avg
+Exemplo de SUM: SELECT TOP 10 SUM (lineTotal) AS "Soma Total" FROM Sales.SalesOrderDetail // Soma os valores totais da coluna lineTotal
+Exemplo de MIN: SELECT TOP 10 MIN (lineTotal) AS "Menor Valor" FROM Sales.SalesOrderDetail // Retorna o menor valor da coluna lineTotal
+Exemplo de MAX: SELECT TOP 10 MAX (lineTotal) AS "Maior Valor" FROM Sales.SalesOrderDetail // Retorna o maior valor da coluna lineTotal
+Exemplo de AVG: SELECT TOP 10 AVG (lineTotal) AS "Valor Médio" FROM Sales.SalesOrderDetail // Retorna o valor médio da coluna lineTotal
+
+Teoria: Group by - Divide em grupos o resultado da consulta
+Exemplo: SELECT SpecialOfferId, SUM (UnitPrice) AS "Soma" FROM sales.SalesOrderDetail GROUP BY SpecialOfferID // Retorna a soma dos UnitPrice agrupado por SpecialOfferID
+Exemplo: SELECT ProductID, count(ProductID) AS "Contagem" FROM sales.SalesOrderDetail GROUP BY ProductID // Retorna quantos produtos foram fabricados agrupados por cada ProductID
+Exemplo: SELECT FirstName, count(FirstName) AS Nome FROM person.Person GROUP BY FirstName // Retorna quantos registros de nomes agrupado por cada nome
+Exemplo: SELECT color, AVG(ListPrice) AS "Média preco" FROM Production.Product WHERE Color = 'Silver' GROUP BY Color // retorna o preco médio de produtos da cor prata
+
+Exercício 16: Quantas pessoas tem o mesmo nome do meio e agrupadas pelos próprios?
+Resposta: SELECT MiddleName, count(MiddleName) AS "Contagem" FROM person.Person GROUP BY MiddleName
+
+Exercício 17: Quantidade média de pedidos para cada pedido
+Resposta: SELECT ProductID, avg(OrderQty) AS "Quantidade média" FROM sales.SalesOrderDetail GROUP BY ProductID
+
+Exercício 18: Os 10 produtos mais vendidos com seu valor máximo ordedados descrecente
+Resposta: SELECT TOP 10 ProductID, sum(LineTotal) FROM sales.SalesOrderDetail GROUP BY ProductID ORDER BY SUM(LineTotal) desc
+
+Exercício 19: Filtrar quantos produtos e qual a média de produtos cadastrados nas nossas ordens de servico
+Resposta: SELECT TOP 10 ProductID, sum(LineTotal) FROM sales.SalesOrderDetail GROUP BY ProductID ORDER BY SUM(LineTotal) desc
+
+Teoria: Having - Para ser usado junto com Group by para filtrar os dados que já estão agrupado.
+Detalhe: O Having só é possível usar depois que os dados já estiverem agrupados.
+O que há de diferente? O group by é aplicado depois que os dados já foram agrupados, e o where é antes.
+Exemplo: SELECT FirstName, count(FirstName) as "Quantidade" FROM person.Person GROUP BY FirstName HAVING COUNT(firstName) > 10
+
+Continua: E se quisermos filtrar apenas as pessoas que possuem "Mr." no campo TITLE?
+A consulta ficaria assim usando o Where:
+
+SELECT FirstName, count(FirstName) AS "quantidade"
+FROM person.Person
+WHERE title = 'Mr.'
+GROUP BY FirstName
+HAVING COUNT(firstName) > 10
+
+Exercício 20: Identificar as provincias que tem maior número de cadastros no nosso sistema a cima de 1000
+Resultado: SELECT StateProvinceID, count(StateProvinceID) AS "Contagem" FROM person.address GROUP BY StateProvinceID HAVING count(StateProvinceID) > 1000
+
+Exercício 21: Consultar quais produtos não estão rendendo em média 1 milhão
+Resultado: SELECT StateProvinceID, count(StateProvinceID) AS "Contagem" FROM person.address GROUP BY StateProvinceID HAVING count(StateProvinceID) > 1000
+
+Teoria: As - Alias, dar um nome a um campo diferente do que já está no banco de dados
+
+Exercício 21: Trazer FirstName e Lastname traduzidos
+Resultado: SELECT FirstName AS "Primeiro Nome", LastName AS "Sobre Nome" FROM person.Person
+
+Exercício 22: Trazer ProductNumber da tabela product traduzido para "Número do Produto
+Resultado: SELECT ProductNumber AS "Número do Produto" FROM Production.Product
+
+Exercício 23: Trazer o campo preco unitário traduzido da tabela Sales
+Resposta: SELECT unitPrice AS "Preco unitário" FROM sales.SalesOrderDetail
+
+Teoria Inner Join: Juntar dados de duas tabelas
+Exemplo:
+SELECT pp.businessEntityID, pp.FirstName, pp.LastName, pe.EmailAddress
+FROM person.person AS pp
+INNER JOIN Person.EmailAddress pe ON pp.BusinessEntityID = pe.BusinessEntityID
+
+Exemplo:
+SELECT pp.name AS "Nome", ps.name AS "Nome Sub", pp.listprice AS "Preco"
+FROM Production.Product AS pp
+INNER JOIN Production.ProductSubcategory ps ON pp.ProductSubcategoryID = ps.ProductSubcategoryID
+
+Exercício 24: Trazer os campos businessEntityID, Name, phoneNumberTypeID e PhoneNumber
+Resposta:
+SELECT pph.businessEntityID, ppn.Name, pph.phoneNumberTypeID, pph.PhoneNumber from person.PersonPhone AS pph
+INNER JOIN person.PhoneNumberType ppn ON pph.phoneNumberTypeID = ppn.phoneNumberTypeID
+
+Exercício 25: Trazer os campos AdressID, City, StateProvince e Name das tabelas person.Adress e person.StateProvince
+Resultado: 
+SELECT pa.AddressID, pa.City, pa.StateProvinceID, ps.Name FROM person.Address AS pa
+INNER JOIN person.StateProvince ps ON pa.StateProvinceID = ps.StateProvinceID
+   
