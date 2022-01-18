@@ -173,4 +173,23 @@ Exercício 25: Trazer os campos AdressID, City, StateProvince e Name das tabelas
 Resultado: 
 SELECT pa.AddressID, pa.City, pa.StateProvinceID, ps.Name FROM person.Address AS pa
 INNER JOIN person.StateProvince ps ON pa.StateProvinceID = ps.StateProvinceID
-   
+
+Tipos de JOIN:
+Inner Join: Retorna apenas os resultados que existem em ambas as tabelas
+Full Outer Join: Retorna todos os dados correspondentes da tabela A e B quando são iguais, e se não houver valores correspondentes, ele preencherá com null
+Left Outer Join: Retorna todos os registros da tabela A e os correspondentes da B se houver, se não houver, retorna null
+
+
+Exemplo: Esta consulta retorna TODOS os dados de ambas as tabelas, pois possui registros vazios no campo personCreditCard, assim é possível filtrar e tazer só os registros vazios.
+SELECT * FROM Person.person PP
+LEFT JOIN sales.personCreditCard PC
+ON PP.BusinessEntityID = PC.BusinessEntityID
+WHERE PC.BusinessEntityID IS NULL
+
+Teoria: Union - Ajuda a combinar 2 ou mais resultados de um select em apenas 1
+Exemplo:
+SELECT ProductID, Name, ProductNumber FROM Production.Product WHERE Name like '%Chain%'
+UNION
+SELECT ProductID, Name, ProductNumber FROM Production.ProductWHERE Name like '%Decal%'
+
+Junta os dados que tem Chain e Decal no nome, na mesma consulta
